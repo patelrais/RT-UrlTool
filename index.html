@@ -96,11 +96,13 @@
     .themeReset{padding:0 4px;}
   }
 
-  .modeTabs{display:flex;gap:8px;flex-wrap:wrap;padding:12px 14px;background:var(--toolbar-bg);border-bottom:1px solid var(--border);flex:none;}
-  .modeTab{padding:8px 16px;font-size:13px;font-weight:700;color:var(--text);background:var(--panel);border:1px solid var(--border);border-radius:8px;cursor:pointer;user-select:none;}
-  .modeTab:hover{background:var(--tab-hover);}
-  .modeTab.active{background:var(--link);color:#fff;border-color:var(--link);}
-  :root[data-theme="dark"] .modeTab.active{color:#0b1020;}
+  .modeTabs{display:flex;flex-wrap:wrap;padding:12px 14px;background:var(--toolbar-bg);border-bottom:1px solid var(--border);flex:none;}
+  .modeSwitch{display:inline-flex;gap:4px;padding:4px;border-radius:12px;background:rgba(100,116,139,.14);box-shadow:inset 0 1px 2px rgba(15,23,42,.12);max-width:100%;}
+  .modeTab{display:inline-flex;align-items:center;gap:8px;padding:9px 20px;font-size:13px;font-weight:700;letter-spacing:.2px;color:var(--muted);background:transparent;border:0;border-radius:9px;cursor:pointer;user-select:none;transition:background .18s,color .18s,box-shadow .18s;white-space:nowrap;}
+  .modeTab svg{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+  .modeTab:hover{color:var(--text);background:rgba(100,116,139,.14);}
+  .modeTab.active{color:#fff;background:linear-gradient(135deg,#0ea5e9 0%,#2563eb 55%,#4f46e5 100%);box-shadow:0 4px 12px rgba(37,99,235,.38),inset 0 1px 0 rgba(255,255,255,.28);}
+  @media (max-width:520px){.modeSwitch{width:100%;flex-direction:column;}.modeTab{justify-content:center;}}
 
   .main{flex:1;min-height:0;overflow:auto;padding:14px;display:flex;flex-direction:column;}
   .main > section:not([hidden]){display:flex;flex-direction:column;flex:1 0 auto;gap:12px;}
@@ -111,12 +113,11 @@
   .optBar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--toolbar-bg);font-size:13px;}
   .optBar label{display:flex;align-items:center;gap:6px;cursor:pointer;}
   .optBar select{padding:6px 8px;font-size:13px;font-family:inherit;color:var(--text);background:var(--panel);border:1px solid var(--border);border-radius:6px;}
-  .seg{display:inline-flex;border:1px solid var(--border);border-radius:8px;overflow:hidden;}
-  .seg button{padding:7px 16px;font-size:13px;font-weight:700;font-family:inherit;color:var(--text);background:var(--panel);border:none;cursor:pointer;}
-  .seg button + button{border-left:1px solid var(--border);}
-  .seg button.active{background:var(--link);color:#fff;}
-  :root[data-theme="dark"] .seg button.active{color:#0b1020;}
-  .optBar .grow{margin-left:auto;}
+  .seg{display:inline-flex;gap:3px;padding:3px;border-radius:10px;background:rgba(100,116,139,.14);box-shadow:inset 0 1px 2px rgba(15,23,42,.12);}
+  .seg button{padding:7px 16px;font-size:13px;font-weight:700;font-family:inherit;color:var(--muted);background:transparent;border:none;border-radius:7px;cursor:pointer;transition:background .18s,color .18s,box-shadow .18s;}
+  .seg button:hover{color:var(--text);}
+    .seg button.active{color:#fff;background:linear-gradient(135deg,#0ea5e9 0%,#2563eb 55%,#4f46e5 100%);box-shadow:0 3px 8px rgba(37,99,235,.35),inset 0 1px 0 rgba(255,255,255,.25);}
+    .optBar .grow{margin-left:auto;}
 
   .panel{border:1px solid var(--border);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;min-width:0;background:var(--panel);}
   .panel.grow{flex:1;}
@@ -199,10 +200,10 @@
       <div class="themeToggle" id="themeToggle" title="Toggle dark mode"><span id="themeIcon">&#9789;</span></div>
     </div>
 
-    <div class="modeTabs" id="modeTabs">
-      <div class="modeTab active" data-mode="convert">Encode / Decode</div>
-      <div class="modeTab" data-mode="parse">URL Parser &amp; Query Builder</div>
-    </div>
+    <div class="modeTabs" id="modeTabs"><div class="modeSwitch">
+      <div class="modeTab active" data-mode="convert" role="button" tabindex="0"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l-5 5 5 5M17 7l5 5-5 5M14 4l-4 16"/></svg>Encode / Decode</div>
+      <div class="modeTab" data-mode="parse" role="button" tabindex="0"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18M3 12h12M3 19h8"/><circle cx="18" cy="17" r="3"/><path d="M20.2 19.2L22 21"/></svg>URL Parser &amp; Query Builder</div>
+    </div></div>
 
     <div class="main">
       <!-- ============ ENCODE / DECODE ============ -->
@@ -341,6 +342,7 @@
     try{ history.replaceState(null, '', '#' + mode); }catch(e){}
   }
   modeTabs.forEach(function(t){ t.addEventListener('click', function(){ setMode(t.dataset.mode); }); });
+  modeTabs.forEach(function(t){ t.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); setMode(t.dataset.mode); } }); });
   setMode((location.hash || '').replace('#', ''));
 
   /* ---------- ENCODE / DECODE ---------- */
